@@ -14,13 +14,13 @@ ENV SASL_HOST=ldap.example.com
 ENV SASL_PRINCIPAL=ldap/ldap.example.com@EXAMPLE.COM
 ENV SASL_REALM=example.com
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget ldap-utils
 
 WORKDIR /tmp
-RUN wget -q http://www-eu.apache.org/dist//directory/apacheds/dist/${APACHEDS_VERSION}/apacheds-${APACHEDS_VERSION}-amd64.deb
 
-RUN chmod +x apacheds-${APACHEDS_VERSION}-amd64.deb
-RUN dpkg -i apacheds-${APACHEDS_VERSION}-amd64.deb
+RUN wget -q http://www-eu.apache.org/dist/directory/apacheds/dist/${APACHEDS_VERSION}/apacheds-${APACHEDS_VERSION}-amd64.deb \
+    chmod +x apacheds-${APACHEDS_VERSION}-amd64.deb \
+    dpkg -i apacheds-${APACHEDS_VERSION}-amd64.deb
 
 WORKDIR /
 
