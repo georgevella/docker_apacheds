@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -y wget ldap-utils
 
 WORKDIR /tmp
 
-RUN wget -q http://www-eu.apache.org/dist/directory/apacheds/dist/${APACHEDS_VERSION}/apacheds-${APACHEDS_VERSION}-amd64.deb \
-    chmod +x apacheds-${APACHEDS_VERSION}-amd64.deb \
-    dpkg -i apacheds-${APACHEDS_VERSION}-amd64.deb
+RUN wget http://www-eu.apache.org/dist/directory/apacheds/dist/${APACHEDS_VERSION}/apacheds-${APACHEDS_VERSION}-amd64.deb \
+    && chmod +x apacheds-${APACHEDS_VERSION}-amd64.deb \
+    && dpkg -i apacheds-${APACHEDS_VERSION}-amd64.deb
 
 WORKDIR /
 
