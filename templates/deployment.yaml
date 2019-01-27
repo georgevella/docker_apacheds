@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "apacheds.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "apacheds.name" . }}
+    helm.sh/chart: {{ include "apacheds.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "apacheds.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "apacheds.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: INSTANCE_ID
+              value: {{ .Values.apacheds.instanceId }}
+            - name: PARTITION_ID
+              value: {{ .Values.apacheds.partitionId }}
+            - name: BASE_DN
+              value: {{ .Values.apacheds.baseDn }}
+            - name: KERBEROS_PRIMARY_REALM
+              value: {{ .Values.apacheds.domain }}
+          ports:
+            - name: ldap
+              containerPort: 10389
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: ldap
+            initialDelaySeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: ldap
+            initialDelaySeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

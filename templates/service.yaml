@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "apacheds.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "apacheds.name" . }}
+    helm.sh/chart: {{ include "apacheds.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: ldap
+      protocol: TCP
+      name: ldap
+  selector:
+    app.kubernetes.io/name: {{ include "apacheds.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
